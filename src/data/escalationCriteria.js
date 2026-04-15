@@ -94,9 +94,67 @@ const goutEscalation = [
   },
 ];
 
+const psaEscalation = [
+  // RED FLAGS
+  {
+    id: 'psa-red-uveitis',
+    level: 'red',
+    condition: (state) => state.answers['psa-eye-symptoms'] === true,
+    message: 'Suspected uveitis. Urgent ophthalmology referral required. Document and escalate immediately.',
+    guideline: 'ACR_PsA_2018',
+  },
+  {
+    id: 'psa-red-multidomain',
+    level: 'red',
+    condition: (state) => {
+      const status = state.answers['psa-treatment-status'];
+      const onBiologic = ['on-bDMARD', 'failed-bDMARD'].includes(status);
+      if (!onBiologic) return false;
+      let activeDomains = 0;
+      if (state.answers['psa-dominant-domain']) activeDomains++;
+      if (state.answers['psa-axial-symptoms'] === true) activeDomains++;
+      if (state.answers['psa-dactylitis'] === true) activeDomains++;
+      if (['moderate3-10%', 'severe>10%'].includes(state.answers['psa-skin-severity'])) activeDomains++;
+      if (Array.isArray(state.answers['psa-enthesitis-sites']) && state.answers['psa-enthesitis-sites'].length > 0) activeDomains++;
+      return activeDomains >= 3;
+    },
+    message: 'Multi-domain active PsA not responding to biologic therapy. Urgent rheumatology review for regimen change.',
+    guideline: 'GRAPPA_2021',
+  },
+  // YELLOW FLAGS
+  {
+    id: 'psa-yellow-not-mda',
+    level: 'yellow',
+    condition: (state) => {
+      const onTreatment = ['on-csDMARD', 'on-bDMARD'].includes(state.answers['psa-treatment-status']);
+      const notMild = state.answers['psa-severity'] !== 'mild';
+      return onTreatment && notMild;
+    },
+    message: 'Not meeting Minimal Disease Activity (MDA) target on current therapy. Consider treatment escalation at next visit.',
+    guideline: 'GRAPPA_2021',
+  },
+  {
+    id: 'psa-yellow-new-domain',
+    level: 'yellow',
+    condition: (state) =>
+      state.answers['psa-axial-symptoms'] === true &&
+      state.answers['psa-dominant-domain'] === 'peripheral',
+    message: 'New axial symptoms in a patient with predominantly peripheral PsA. Reassess dominant domain and consider imaging.',
+    guideline: 'ACR_PsA_2018',
+  },
+  {
+    id: 'psa-yellow-skin-flare',
+    level: 'yellow',
+    condition: (state) => state.answers['psa-skin-severity'] === 'severe>10%',
+    message: 'Severe skin flare (BSA >10%) — dermatology co-management recommended. Consider IL-17i or IL-23i for superior skin efficacy.',
+    guideline: 'ACR_PsA_2018',
+  },
+];
+
 const escalationByCondition = {
   ra: raEscalation,
   gout: goutEscalation,
+  psa: psaEscalation,
 };
 
 export function evaluateEscalation(state) {

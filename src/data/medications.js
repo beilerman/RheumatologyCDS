@@ -525,6 +525,322 @@ export const MEDICATIONS = {
       ],
     },
   ],
+  psa: [
+    {
+      id: 'psa-methotrexate',
+      name: 'Methotrexate',
+      class: 'csDMARD',
+      monitoring: [
+        {
+          item: 'CBC with differential',
+          frequency: 'Every 3 months initially, then every 3-6 months',
+          notes: '',
+        },
+        {
+          item: 'CMP (LFTs, renal function)',
+          frequency: 'Every 3 months initially, then every 3-6 months',
+          notes: '',
+        },
+        {
+          item: 'Hepatitis B/C screening',
+          frequency: 'Before starting',
+          notes: '',
+        },
+        {
+          item: 'Folic acid 1mg daily prescribed',
+          frequency: 'Verify at each visit',
+          notes: 'Reduces GI and hematologic side effects',
+        },
+      ],
+    },
+    {
+      id: 'psa-leflunomide',
+      name: 'Leflunomide',
+      class: 'csDMARD',
+      monitoring: [
+        {
+          item: 'CBC',
+          frequency: 'Baseline then periodically',
+          notes: '',
+        },
+        {
+          item: 'CMP (LFTs)',
+          frequency: 'Monthly for first 6 months, then every 6-8 weeks',
+          notes: '',
+        },
+        {
+          item: 'Blood pressure',
+          frequency: 'Each visit',
+          notes: 'Can cause hypertension',
+        },
+      ],
+    },
+    {
+      id: 'psa-sulfasalazine',
+      name: 'Sulfasalazine',
+      class: 'csDMARD',
+      monitoring: [
+        {
+          item: 'CBC with differential',
+          frequency: 'Every 2-4 weeks for first 3 months, then every 3 months',
+          notes: '',
+        },
+        {
+          item: 'CMP',
+          frequency: 'Every 2-4 weeks for first 3 months, then every 3 months',
+          notes: '',
+        },
+      ],
+    },
+    {
+      id: 'psa-adalimumab',
+      name: 'Adalimumab',
+      class: 'TNFi',
+      monitoring: [
+        {
+          item: 'TB screening (PPD or IGRA)',
+          frequency: 'Before starting and annually',
+          notes: '',
+        },
+        {
+          item: 'Hepatitis B/C screening',
+          frequency: 'Before starting',
+          notes: '',
+        },
+        {
+          item: 'CBC, CMP',
+          frequency: 'Baseline and periodically',
+          notes: '',
+        },
+        {
+          item: 'Monitor for infection signs',
+          frequency: 'Each visit',
+          notes: '',
+        },
+        {
+          item: 'Heart failure screening',
+          frequency: 'Each visit',
+          notes: 'Contraindicated in moderate-severe HF',
+        },
+      ],
+    },
+    {
+      id: 'psa-etanercept',
+      name: 'Etanercept',
+      class: 'TNFi',
+      monitoring: [
+        {
+          item: 'TB screening (PPD or IGRA)',
+          frequency: 'Before starting and annually',
+          notes: '',
+        },
+        {
+          item: 'Hepatitis B/C screening',
+          frequency: 'Before starting',
+          notes: '',
+        },
+        {
+          item: 'CBC, CMP',
+          frequency: 'Baseline and periodically',
+          notes: '',
+        },
+        {
+          item: 'Monitor for infection signs',
+          frequency: 'Each visit',
+          notes: '',
+        },
+        {
+          item: 'Heart failure screening',
+          frequency: 'Each visit',
+          notes: '',
+        },
+      ],
+    },
+    {
+      id: 'psa-apremilast',
+      name: 'Apremilast',
+      class: 'PDE4i',
+      monitoring: [
+        {
+          item: 'Weight',
+          frequency: 'Each visit',
+          notes: 'Weight loss reported; monitor in underweight patients',
+        },
+        {
+          item: 'Depression and mood symptoms',
+          frequency: 'Each visit',
+          notes: 'New or worsening depression/suicidal ideation reported; assess at baseline',
+        },
+        {
+          item: 'GI tolerance (nausea, diarrhea)',
+          frequency: 'First 4 weeks, then as needed',
+          notes: 'GI side effects typically improve after first month. Titration schedule helps tolerability.',
+        },
+      ],
+    },
+    {
+      id: 'psa-secukinumab',
+      name: 'Secukinumab',
+      class: 'IL-17i',
+      monitoring: [
+        {
+          item: 'TB screening (PPD or IGRA)',
+          frequency: 'Before starting',
+          notes: '',
+        },
+        {
+          item: 'Candidal infections',
+          frequency: 'Each visit',
+          notes: 'Mucocutaneous candidiasis risk increased; usually mild and responsive to treatment',
+        },
+        {
+          item: 'IBD symptom screening',
+          frequency: 'Each visit',
+          notes: 'Can exacerbate or unmask Crohn\'s disease. Monitor for new GI symptoms.',
+        },
+      ],
+    },
+    {
+      id: 'psa-ixekizumab',
+      name: 'Ixekizumab',
+      class: 'IL-17i',
+      monitoring: [
+        {
+          item: 'TB screening (PPD or IGRA)',
+          frequency: 'Before starting',
+          notes: '',
+        },
+        {
+          item: 'Candidal infections',
+          frequency: 'Each visit',
+          notes: 'Mucocutaneous candidiasis risk increased',
+        },
+        {
+          item: 'IBD symptom screening',
+          frequency: 'Each visit',
+          notes: 'Can exacerbate IBD. Contraindicated in active Crohn\'s disease.',
+        },
+      ],
+    },
+    {
+      id: 'psa-ustekinumab',
+      name: 'Ustekinumab',
+      class: 'IL-12/23i',
+      monitoring: [
+        {
+          item: 'TB screening (PPD or IGRA)',
+          frequency: 'Before starting',
+          notes: '',
+        },
+        {
+          item: 'Infection monitoring',
+          frequency: 'Each visit',
+          notes: 'Monitor for signs of infection; risk generally lower than TNFi',
+        },
+      ],
+    },
+    {
+      id: 'psa-guselkumab',
+      name: 'Guselkumab',
+      class: 'IL-23i',
+      monitoring: [
+        {
+          item: 'TB screening (PPD or IGRA)',
+          frequency: 'Before starting',
+          notes: '',
+        },
+        {
+          item: 'Infection monitoring',
+          frequency: 'Each visit',
+          notes: 'Monitor for signs of serious infection',
+        },
+      ],
+    },
+    {
+      id: 'psa-tofacitinib',
+      name: 'Tofacitinib',
+      class: 'JAKi',
+      monitoring: [
+        {
+          item: 'CBC with differential and lymphocytes',
+          frequency: 'Baseline, 4-8 weeks, then every 3 months',
+          notes: '',
+        },
+        {
+          item: 'LFTs',
+          frequency: 'Baseline then periodically',
+          notes: '',
+        },
+        {
+          item: 'Lipid panel',
+          frequency: 'Baseline and 4-8 weeks after starting',
+          notes: '',
+        },
+        {
+          item: 'Renal function',
+          frequency: 'Baseline then periodically',
+          notes: '',
+        },
+        {
+          item: 'TB and viral hepatitis screening',
+          frequency: 'Before starting',
+          notes: '',
+        },
+        {
+          item: 'VTE risk assessment',
+          frequency: 'Before starting',
+          notes: '',
+        },
+        {
+          item: 'FDA boxed warning discussion',
+          frequency: 'Before starting',
+          notes: 'Age >65 or CV risk factors: increased risk of serious cardiac events, malignancy, thrombosis, death',
+        },
+      ],
+    },
+    {
+      id: 'psa-upadacitinib',
+      name: 'Upadacitinib',
+      class: 'JAKi',
+      monitoring: [
+        {
+          item: 'CBC with differential and lymphocytes',
+          frequency: 'Baseline, 4-8 weeks, then every 3 months',
+          notes: '',
+        },
+        {
+          item: 'LFTs',
+          frequency: 'Baseline then periodically',
+          notes: '',
+        },
+        {
+          item: 'Lipid panel',
+          frequency: 'Baseline and 4-8 weeks after starting',
+          notes: '',
+        },
+        {
+          item: 'Renal function',
+          frequency: 'Baseline then periodically',
+          notes: '',
+        },
+        {
+          item: 'TB and viral hepatitis screening',
+          frequency: 'Before starting',
+          notes: '',
+        },
+        {
+          item: 'VTE risk assessment',
+          frequency: 'Before starting',
+          notes: '',
+        },
+        {
+          item: 'FDA boxed warning discussion',
+          frequency: 'Before starting',
+          notes: 'Age >65 or CV risk factors: increased risk of serious cardiac events, malignancy, thrombosis, death',
+        },
+      ],
+    },
+  ],
   gout: [
     {
       id: 'allopurinol',
