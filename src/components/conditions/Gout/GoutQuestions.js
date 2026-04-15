@@ -46,6 +46,12 @@ export const GOUT_QUESTION_GROUPS = [
         },
       },
       {
+        id: 'gout-radiographic-damage',
+        label: 'Radiographic damage attributable to gout (erosions)?',
+        type: 'toggle',
+        tooltip: 'Joint erosions or bony changes on X-ray attributable to gout. Strong indication for ULT per ACR 2020.',
+      },
+      {
         id: 'gout-pain',
         label: 'Current pain (0–10)',
         type: 'slider',
@@ -236,6 +242,19 @@ export const GOUT_QUESTION_GROUPS = [
         id: 'gout-hla-b5801-tested',
         label: 'HLA-B*5801 testing done?',
         type: 'toggle',
+        showWhen: (answers) => !answers['gout-on-ult'],
+      },
+      {
+        id: 'gout-hla-b5801-positive',
+        label: 'HLA-B*5801 positive?',
+        type: 'toggle',
+        showWhen: (answers) => answers['gout-hla-b5801-tested'] === true && !answers['gout-on-ult'],
+      },
+      {
+        id: 'gout-high-risk-ethnicity',
+        label: 'Southeast Asian or African American descent?',
+        type: 'toggle',
+        tooltip: 'ACR 2020 conditionally recommends HLA-B*5801 testing before allopurinol in Southeast Asian and African American patients due to higher prevalence of hypersensitivity allele.',
         showWhen: (answers) => !answers['gout-on-ult'],
       },
       {

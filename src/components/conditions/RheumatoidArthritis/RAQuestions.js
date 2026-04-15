@@ -181,6 +181,27 @@ export const RA_QUESTION_GROUPS = [
         label: 'Non-tuberculous mycobacterial (NTM) lung disease?',
         type: 'toggle',
       },
+      {
+        id: 'ra-age-50-plus',
+        label: 'Patient age ≥50?',
+        type: 'toggle',
+        tooltip: 'FDA boxed warning: JAK inhibitors carry increased risk of MACE, VTE, malignancy, and death in patients ≥50 with CV risk factors (ORAL Surveillance trial).',
+      },
+      {
+        id: 'ra-cv-risk-factors',
+        label: 'Cardiovascular risk factors (smoking, HTN, diabetes, dyslipidemia)?',
+        type: 'toggle',
+        showWhen: (answers) => answers['ra-age-50-plus'] === true,
+        tooltip: 'Relevant for JAKi risk stratification per FDA boxed warning.',
+      },
+      {
+        id: 'ra-tb-screening-done',
+        label: 'TB screening (PPD or IGRA) completed?',
+        type: 'toggle',
+        showWhen: (answers) =>
+          ['failed-csDMARD', 'failed-bDMARD'].includes(answers['ra-dmard-history']),
+        tooltip: 'TB screening is required before initiating any biologic or JAK inhibitor.',
+      },
     ],
   },
 ];

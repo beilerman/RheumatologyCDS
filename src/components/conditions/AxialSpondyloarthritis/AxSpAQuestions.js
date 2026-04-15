@@ -158,6 +158,14 @@ export const AXSPA_QUESTION_GROUPS = [
         tooltip:
           'Treatment history determines the appropriate step in the ACR/SAA/SPARTAN 2019 algorithm.',
       },
+      {
+        id: 'axspa-tb-screening-done',
+        label: 'TB screening (PPD or IGRA) completed?',
+        type: 'toggle',
+        showWhen: (answers) =>
+          ['failed-nsaid', 'failed-TNFi', 'failed-IL17i'].includes(answers['axspa-treatment-status']),
+        tooltip: 'TB screening is required before initiating any biologic or JAK inhibitor.',
+      },
     ],
   },
 

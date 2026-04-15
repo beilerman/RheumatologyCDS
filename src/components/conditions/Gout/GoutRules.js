@@ -4,6 +4,7 @@ function ultIndicated(state) {
   const a = state.answers;
   return (
     a['gout-tophi'] === true ||
+    a['gout-radiographic-damage'] === true ||
     (a['gout-flare-frequency'] != null && a['gout-flare-frequency'] >= 2)
   );
 }
@@ -24,10 +25,10 @@ export const goutRules = [
   {
     id: 'gout-ult-indicated-strong',
     condition: (state) => !state.answers['gout-on-ult'] && ultIndicated(state),
-    recommendation: 'Urate-lowering therapy (ULT) is strongly recommended (tophi, radiographic damage, or >=2 flares/year).',
+    recommendation: 'Urate-lowering therapy (ULT) is strongly recommended (tophi, radiographic damage attributable to gout, or >=2 flares/year).',
     strength: 'strong',
     guideline: 'ACR_GOUT_2020',
-    rationale: 'ACR 2020 strongly recommends ULT for patients with tophi, radiographic damage attributable to gout, or frequent flares (>=2/year).',
+    rationale: 'ACR 2020 strongly recommends ULT for patients with tophi, radiographic damage (erosions) attributable to gout, or frequent flares (>=2/year).',
   },
   // ULT indications - conditional
   {
@@ -52,6 +53,32 @@ export const goutRules = [
         note: 'CKD: Start at 50 mg/day. Titrate by 50 mg increments.',
       },
     ],
+  },
+  // HLA-B*5801 screening before allopurinol
+  {
+    id: 'gout-hla-b5801-screening',
+    condition: (state) => {
+      const a = state.answers;
+      return (
+        !a['gout-on-ult'] &&
+        (ultIndicated(state) || ultConditionalRisk(state)) &&
+        a['gout-high-risk-ethnicity'] === true &&
+        a['gout-hla-b5801-tested'] !== true
+      );
+    },
+    recommendation: 'HLA-B*5801 testing is conditionally recommended before starting allopurinol in patients of Southeast Asian or African American descent. Do NOT start allopurinol until result is available.',
+    strength: 'conditional',
+    guideline: 'ACR_GOUT_2020',
+    rationale: 'ACR 2020 conditionally recommends HLA-B*5801 testing prior to allopurinol in Southeast Asian (e.g., Korean, Han Chinese, Thai) and African American patients due to higher prevalence of the allele associated with severe allopurinol hypersensitivity syndrome (AHS).',
+  },
+  {
+    id: 'gout-hla-b5801-positive-avoid',
+    condition: (state) =>
+      state.answers['gout-hla-b5801-positive'] === true,
+    recommendation: 'HLA-B*5801 POSITIVE: Do NOT use allopurinol. Use febuxostat as alternative ULT (with CV risk discussion if applicable).',
+    strength: 'strong',
+    guideline: 'ACR_GOUT_2020',
+    rationale: 'Patients who are HLA-B*5801 positive have a markedly increased risk of severe allopurinol hypersensitivity syndrome. Allopurinol is contraindicated. Febuxostat is the recommended alternative.',
   },
   // ULT titration
   {

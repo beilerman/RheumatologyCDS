@@ -204,3 +204,53 @@ describe('PsA Rules: guideline hydration', () => {
     expect(rec.guidelineRef.short).toBe('GRAPPA 2021 PsA Recommendations');
   });
 });
+
+describe('PsA Rules: TB screening', () => {
+  it('reminds TB screening when not done before biologic initiation', () => {
+    const state = makeState({
+      answers: {
+        'psa-treatment-status': 'failed-csDMARD',
+        'psa-tb-screening-done': false,
+      },
+    });
+    const recs = getRecommendations(state, psaRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'psa-tb-screening-reminder');
+    expect(tb).toBeDefined();
+    expect(tb.strength).toBe('strong');
+  });
+
+  it('does NOT remind TB screening when already completed', () => {
+    const state = makeState({
+      answers: {
+        'psa-treatment-status': 'failed-csDMARD',
+        'psa-tb-screening-done': true,
+      },
+    });
+    const recs = getRecommendations(state, psaRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'psa-tb-screening-reminder');
+    expect(tb).toBeUndefined();
+  });
+
+  it('does NOT remind TB screening for treatment-naive patients', () => {
+    const state = makeState({
+      answers: {
+        'psa-treatment-status': 'naive',
+      },
+    });
+    const recs = getRecommendations(state, psaRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'psa-tb-screening-reminder');
+    expect(tb).toBeUndefined();
+  });
+
+  it('reminds TB screening after NSAID failure (biologic candidate)', () => {
+    const state = makeState({
+      answers: {
+        'psa-treatment-status': 'failed-nsaid',
+        'psa-tb-screening-done': false,
+      },
+    });
+    const recs = getRecommendations(state, psaRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'psa-tb-screening-reminder');
+    expect(tb).toBeDefined();
+  });
+});

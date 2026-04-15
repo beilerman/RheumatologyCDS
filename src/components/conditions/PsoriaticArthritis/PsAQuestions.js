@@ -184,6 +184,21 @@ export const PSA_QUESTION_GROUPS = [
     ],
   },
   {
+    id: 'psa-safety-screening',
+    title: 'Safety Screening',
+    section: 'symptoms',
+    questions: [
+      {
+        id: 'psa-tb-screening-done',
+        label: 'TB screening (PPD or IGRA) completed?',
+        type: 'toggle',
+        showWhen: (answers) =>
+          ['failed-csDMARD', 'failed-bDMARD', 'failed-nsaid'].includes(answers['psa-treatment-status']),
+        tooltip: 'TB screening is required before initiating any biologic or JAK inhibitor.',
+      },
+    ],
+  },
+  {
     id: 'psa-labs',
     title: 'Laboratory Values',
     section: 'scoring',

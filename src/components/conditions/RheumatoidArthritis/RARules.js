@@ -143,6 +143,38 @@ export const raRules = [
     rationale:
       'Short-course glucocorticoids are acceptable as bridge therapy while waiting for DMARD effect.',
   },
+  // JAKi boxed warning at decision point
+  {
+    id: 'ra-jaki-cv-warning',
+    condition: (state) => {
+      const da = getDiseaseActivity(state);
+      return (
+        ['Moderate', 'High'].includes(da) &&
+        ['failed-csDMARD', 'failed-bDMARD'].includes(state.answers['ra-dmard-history']) &&
+        state.answers['ra-age-50-plus'] === true &&
+        state.answers['ra-cv-risk-factors'] === true
+      );
+    },
+    recommendation:
+      'FDA BOXED WARNING — JAK inhibitors: Patient is ≥50 with CV risk factors. ORAL Surveillance trial showed increased risk of MACE, VTE, malignancy, and death with tofacitinib vs. TNFi. Prefer bDMARD over JAKi unless bDMARDs have failed or are contraindicated.',
+    strength: 'strong',
+    guideline: 'ACR_RA_2021',
+    rationale:
+      'ACR 2021 conditionally recommends bDMARDs over JAKi for patients ≥50 with CV risk factors based on ORAL Surveillance safety signals. FDA boxed warning applies to all JAK inhibitors (tofacitinib, baricitinib, upadacitinib).',
+  },
+  // TB screening at biologic decision point
+  {
+    id: 'ra-tb-screening-reminder',
+    condition: (state) =>
+      ['failed-csDMARD', 'failed-bDMARD'].includes(state.answers['ra-dmard-history']) &&
+      state.answers['ra-tb-screening-done'] !== true,
+    recommendation:
+      'TB screening (PPD or IGRA) is REQUIRED before initiating any biologic or JAK inhibitor. Do not start therapy until TB status is confirmed.',
+    strength: 'strong',
+    guideline: 'ACR_RA_2021',
+    rationale:
+      'All biologic and targeted synthetic DMARDs increase risk of reactivation TB. Screening is mandatory before initiation and should be repeated annually while on therapy.',
+  },
   // Special populations
   {
     id: 'ra-special-hf-avoid-tnfi',

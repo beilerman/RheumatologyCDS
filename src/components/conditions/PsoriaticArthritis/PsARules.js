@@ -131,6 +131,20 @@ export const psaRules = [
       'Apremilast is conditionally recommended for active PsA as an alternative to biologics, especially when patients prefer oral therapy, have contraindications to biologics, or have mild-to-moderate disease.',
   },
 
+  // --- TB screening at biologic decision point ---
+  {
+    id: 'psa-tb-screening-reminder',
+    condition: (state) =>
+      ['failed-csDMARD', 'failed-bDMARD', 'failed-nsaid'].includes(state.answers['psa-treatment-status']) &&
+      state.answers['psa-tb-screening-done'] !== true,
+    recommendation:
+      'TB screening (PPD or IGRA) is REQUIRED before initiating any biologic or JAK inhibitor. Do not start therapy until TB status is confirmed.',
+    strength: 'strong',
+    guideline: 'ACR_PsA_2018',
+    rationale:
+      'All biologic DMARDs increase risk of reactivation TB. Screening is mandatory before initiation and should be repeated annually while on therapy.',
+  },
+
   // --- IBD caution with IL-17i ---
   {
     id: 'psa-il17-ibd-caution',

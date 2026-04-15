@@ -161,3 +161,204 @@ describe('getRecommendations', () => {
     }
   });
 });
+
+describe('RA Rules: JAKi boxed warning', () => {
+  it('warns about JAKi CV risk for patients >=50 with CV risk factors after csDMARD failure', () => {
+    const state = makeState({
+      scores: { cdai: { score: 18, category: 'Moderate' } },
+      answers: {
+        'ra-dmard-history': 'failed-csDMARD',
+        'ra-age-50-plus': true,
+        'ra-cv-risk-factors': true,
+      },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const warning = recs.find((r) => r.id === 'ra-jaki-cv-warning');
+    expect(warning).toBeDefined();
+    expect(warning.strength).toBe('strong');
+  });
+
+  it('warns about JAKi CV risk for patients >=50 with CV risk factors after bDMARD failure', () => {
+    const state = makeState({
+      scores: { cdai: { score: 25, category: 'High' } },
+      answers: {
+        'ra-dmard-history': 'failed-bDMARD',
+        'ra-current-biologic-mechanism': 'TNFi',
+        'ra-age-50-plus': true,
+        'ra-cv-risk-factors': true,
+      },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const warning = recs.find((r) => r.id === 'ra-jaki-cv-warning');
+    expect(warning).toBeDefined();
+  });
+
+  it('does NOT warn about JAKi for patients without CV risk factors', () => {
+    const state = makeState({
+      scores: { cdai: { score: 18, category: 'Moderate' } },
+      answers: {
+        'ra-dmard-history': 'failed-csDMARD',
+        'ra-age-50-plus': true,
+        'ra-cv-risk-factors': false,
+      },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const warning = recs.find((r) => r.id === 'ra-jaki-cv-warning');
+    expect(warning).toBeUndefined();
+  });
+
+  it('does NOT warn about JAKi for patients under 50', () => {
+    const state = makeState({
+      scores: { cdai: { score: 18, category: 'Moderate' } },
+      answers: {
+        'ra-dmard-history': 'failed-csDMARD',
+        'ra-age-50-plus': false,
+      },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const warning = recs.find((r) => r.id === 'ra-jaki-cv-warning');
+    expect(warning).toBeUndefined();
+  });
+});
+
+describe('RA Rules: TB screening', () => {
+  it('reminds TB screening when not done before biologic initiation', () => {
+    const state = makeState({
+      answers: {
+        'ra-dmard-history': 'failed-csDMARD',
+        'ra-tb-screening-done': false,
+      },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'ra-tb-screening-reminder');
+    expect(tb).toBeDefined();
+    expect(tb.strength).toBe('strong');
+  });
+
+  it('does NOT remind TB screening when already completed', () => {
+    const state = makeState({
+      answers: {
+        'ra-dmard-history': 'failed-csDMARD',
+        'ra-tb-screening-done': true,
+      },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'ra-tb-screening-reminder');
+    expect(tb).toBeUndefined();
+  });
+
+  it('does NOT remind TB screening for DMARD-naive patients', () => {
+    const state = makeState({
+      answers: {
+        'ra-dmard-history': 'naive',
+      },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'ra-tb-screening-reminder');
+    expect(tb).toBeUndefined();
+  });
+
+  it('TB screening fires when ra-tb-screening-done is undefined (unanswered)', () => {
+    const state = makeState({
+      answers: {
+        'ra-dmard-history': 'failed-csDMARD',
+        // ra-tb-screening-done not set at all
+      },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'ra-tb-screening-reminder');
+    expect(tb).toBeDefined();
+  });
+
+  it('TB screening does NOT fire for on-bDMARD (already on therapy)', () => {
+    const state = makeState({
+      answers: {
+        'ra-dmard-history': 'on-bDMARD',
+      },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'ra-tb-screening-reminder');
+    expect(tb).toBeUndefined();
+  });
+});
+
+describe('RA Rules: edge cases', () => {
+  it('JAKi warning does NOT fire when disease activity is Low', () => {
+    const state = makeState({
+      scores: { cdai: { score: 8, category: 'Low' } },
+      answers: {
+        'ra-dmard-history': 'failed-csDMARD',
+        'ra-age-50-plus': true,
+        'ra-cv-risk-factors': true,
+      },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const warning = recs.find((r) => r.id === 'ra-jaki-cv-warning');
+    expect(warning).toBeUndefined();
+  });
+
+  it('JAKi warning does NOT fire when disease activity is null (no scores)', () => {
+    const state = makeState({
+      scores: {},
+      answers: {
+        'ra-dmard-history': 'failed-csDMARD',
+        'ra-age-50-plus': true,
+        'ra-cv-risk-factors': true,
+      },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const warning = recs.find((r) => r.id === 'ra-jaki-cv-warning');
+    expect(warning).toBeUndefined();
+  });
+
+  it('getDiseaseActivity falls back to DAS28-ESR when CDAI is missing', () => {
+    const state = makeState({
+      scores: { das28esr: { score: 4.0, category: 'Moderate' } },
+      answers: { 'ra-dmard-history': 'naive' },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const mtx = recs.find((r) => r.id === 'ra-naive-mod-high-mtx');
+    expect(mtx).toBeDefined();
+  });
+
+  it('getDiseaseActivity falls back to DAS28-CRP when CDAI and DAS28-ESR missing', () => {
+    const state = makeState({
+      scores: { das28crp: { score: 4.0, category: 'Moderate' } },
+      answers: { 'ra-dmard-history': 'naive' },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const mtx = recs.find((r) => r.id === 'ra-naive-mod-high-mtx');
+    expect(mtx).toBeDefined();
+  });
+
+  it('getDiseaseActivity falls back to RAPID3 when all DAS28 missing', () => {
+    const state = makeState({
+      scores: { rapid3: { score: 15, category: 'High' } },
+      answers: { 'ra-dmard-history': 'naive' },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    const mtx = recs.find((r) => r.id === 'ra-naive-mod-high-mtx');
+    expect(mtx).toBeDefined();
+  });
+
+  it('empty answers object does not crash any RA rule', () => {
+    const state = makeState({ answers: {} });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    expect(Array.isArray(recs)).toBe(true);
+  });
+
+  it('HF + JAKi warning both fire simultaneously for eligible patient', () => {
+    const state = makeState({
+      scores: { cdai: { score: 25, category: 'High' } },
+      answers: {
+        'ra-dmard-history': 'failed-csDMARD',
+        'ra-heart-failure': true,
+        'ra-age-50-plus': true,
+        'ra-cv-risk-factors': true,
+      },
+    });
+    const recs = getRecommendations(state, raRules, GUIDELINES);
+    expect(recs.find((r) => r.id === 'ra-special-hf-avoid-tnfi')).toBeDefined();
+    expect(recs.find((r) => r.id === 'ra-jaki-cv-warning')).toBeDefined();
+  });
+});

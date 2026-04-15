@@ -106,6 +106,20 @@ export const axspaRules = [
       'ACR/SAA/SPARTAN 2019 strongly recommends against systemic glucocorticoids for axial spondyloarthritis due to lack of efficacy and significant long-term side effects. Local corticosteroid injections (sacroiliac joint, entheseal sites) are acceptable for targeted relief.',
   },
 
+  // TB screening at biologic decision point
+  {
+    id: 'axspa-tb-screening-reminder',
+    condition: (state) =>
+      ['failed-nsaid', 'failed-TNFi', 'failed-IL17i'].includes(state.answers['axspa-treatment-status']) &&
+      state.answers['axspa-tb-screening-done'] !== true,
+    recommendation:
+      'TB screening (PPD or IGRA) is REQUIRED before initiating any biologic or JAK inhibitor. Do not start therapy until TB status is confirmed.',
+    strength: 'strong',
+    guideline: 'ACR_axSpA_2019',
+    rationale:
+      'All biologic DMARDs increase risk of reactivation TB. Screening is mandatory before initiation and should be repeated annually while on therapy.',
+  },
+
   // Uveitis — urgent ophthalmology referral
   {
     id: 'axspa-uveitis',

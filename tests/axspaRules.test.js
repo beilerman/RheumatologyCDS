@@ -184,3 +184,53 @@ describe('AxSpA Rules: guideline hydration', () => {
     expect(rec.guidelineRef.short).toBe('ACR/SAA/SPARTAN 2019 axSpA Guideline');
   });
 });
+
+describe('AxSpA Rules: TB screening', () => {
+  it('reminds TB screening when not done after NSAID failure', () => {
+    const state = makeState({
+      answers: {
+        'axspa-treatment-status': 'failed-nsaid',
+        'axspa-tb-screening-done': false,
+      },
+    });
+    const recs = getRecommendations(state, axspaRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'axspa-tb-screening-reminder');
+    expect(tb).toBeDefined();
+    expect(tb.strength).toBe('strong');
+  });
+
+  it('reminds TB screening when not done after TNFi failure', () => {
+    const state = makeState({
+      answers: {
+        'axspa-treatment-status': 'failed-TNFi',
+        'axspa-tb-screening-done': false,
+      },
+    });
+    const recs = getRecommendations(state, axspaRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'axspa-tb-screening-reminder');
+    expect(tb).toBeDefined();
+  });
+
+  it('does NOT remind TB screening when already completed', () => {
+    const state = makeState({
+      answers: {
+        'axspa-treatment-status': 'failed-nsaid',
+        'axspa-tb-screening-done': true,
+      },
+    });
+    const recs = getRecommendations(state, axspaRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'axspa-tb-screening-reminder');
+    expect(tb).toBeUndefined();
+  });
+
+  it('does NOT remind TB screening for treatment-naive patients', () => {
+    const state = makeState({
+      answers: {
+        'axspa-treatment-status': 'naive',
+      },
+    });
+    const recs = getRecommendations(state, axspaRules, GUIDELINES);
+    const tb = recs.find((r) => r.id === 'axspa-tb-screening-reminder');
+    expect(tb).toBeUndefined();
+  });
+});

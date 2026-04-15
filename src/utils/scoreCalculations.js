@@ -29,10 +29,11 @@ export function calculateCDAI({ sjc28, tjc28, patientGlobal, providerGlobal }) {
 
 export function calculateDAS28ESR({ sjc28, tjc28, esr, patientGlobal }) {
   if (hasMissing([sjc28, tjc28, esr, patientGlobal])) return MISSING;
+  const safeESR = Math.max(esr, 1); // ESR cannot be 0 clinically; clamp to prevent ln(0)=-Infinity
   const score = round1(
     0.56 * Math.sqrt(tjc28) +
     0.28 * Math.sqrt(sjc28) +
-    0.70 * Math.log(esr) +
+    0.70 * Math.log(safeESR) +
     0.014 * patientGlobal
   );
   const finalCategory = score < 2.6 ? 'Remission'
