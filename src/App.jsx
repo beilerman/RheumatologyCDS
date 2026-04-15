@@ -8,7 +8,7 @@ import { Sidebar } from './components/layout/Sidebar.jsx';
 import { ConditionSelector } from './components/conditions/ConditionSelector.jsx';
 import { RAModule } from './components/conditions/RheumatoidArthritis/RAModule.jsx';
 import { GoutModule } from './components/conditions/Gout/GoutModule.jsx';
-import { PsAModule } from './components/conditions/PsoriaticArthritis/PSAModule.jsx';
+import { PsAModule } from './components/conditions/PsoriaticArthritis/PsAModule.jsx';
 import { AxSpAModule } from './components/conditions/AxialSpondyloarthritis/AxSpAModule.jsx';
 import { UIAModule } from './components/conditions/UndifferentiatedIA/UIAModule.jsx';
 import { FibroModule } from './components/conditions/Fibromyalgia/FibroModule.jsx';
