@@ -269,12 +269,85 @@ const uiaEscalation = [
   },
 ];
 
+const fibroEscalation = [
+  // RED FLAGS
+  {
+    id: 'fibro-red-neuro',
+    level: 'red',
+    condition: (state) => state.answers['fibro-alternative-diagnosis-concern'] === true,
+    message:
+      'Alternative diagnosis concern flagged. Evaluate for inflammatory arthritis, hypothyroidism, sleep apnea, vitamin D deficiency, or other masqueraders. Consider targeted workup.',
+    guideline: 'EULAR_FIBRO_2016',
+  },
+  {
+    id: 'fibro-red-suicidal',
+    level: 'red',
+    condition: (state) => {
+      const phq9 = state.answers['fibro-phq9-score'];
+      return phq9 != null && phq9 >= 20;
+    },
+    message:
+      'Severe depression (PHQ-9 ≥20) — assess for active suicidal ideation. Immediate behavioral health referral required.',
+    guideline: 'EULAR_FIBRO_2016',
+  },
+  // YELLOW FLAGS
+  {
+    id: 'fibro-yellow-depression',
+    level: 'yellow',
+    condition: (state) => {
+      const phq9 = state.answers['fibro-phq9-score'];
+      return phq9 != null && phq9 >= 10 && phq9 < 20;
+    },
+    message:
+      'Moderate depression (PHQ-9 ≥10). Behavioral health referral recommended alongside fibromyalgia management.',
+    guideline: 'EULAR_FIBRO_2016',
+  },
+  {
+    id: 'fibro-yellow-polypharmacy',
+    level: 'yellow',
+    condition: (state) => {
+      const fibroMeds = [
+        'duloxetine',
+        'milnacipran',
+        'pregabalin',
+        'gabapentin',
+        'amitriptyline',
+        'cyclobenzaprine',
+      ];
+      const count = (state.medications?.current || []).filter((m) =>
+        fibroMeds.includes(m)
+      ).length;
+      return count >= 3;
+    },
+    message:
+      'On ≥3 fibromyalgia medications. Review each for clear benefit — taper and discontinue agents without measurable improvement.',
+    guideline: 'EULAR_FIBRO_2016',
+  },
+  {
+    id: 'fibro-yellow-decline',
+    level: 'yellow',
+    condition: (state) => state.answers['fibro-adl-limitations'] === 'severe',
+    message:
+      'Severe functional limitation despite treatment. Consider multidisciplinary pain program or specialist referral.',
+    guideline: 'EULAR_FIBRO_2016',
+  },
+  {
+    id: 'fibro-yellow-opioid-request',
+    level: 'yellow',
+    condition: (state) => state.answers['fibro-requesting-opioids'] === true,
+    message:
+      'Patient requesting opioids for fibromyalgia. Counsel on lack of efficacy and risks. Reinforce non-pharmacologic first-line approach.',
+    guideline: 'EULAR_FIBRO_2016',
+  },
+];
+
 const escalationByCondition = {
   ra: raEscalation,
   gout: goutEscalation,
   psa: psaEscalation,
   axspa: axspaEscalation,
   uia: uiaEscalation,
+  fibro: fibroEscalation,
 };
 
 export function evaluateEscalation(state) {

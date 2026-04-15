@@ -997,6 +997,150 @@ export const MEDICATIONS = {
       ],
     },
   ],
+  fibro: [
+    {
+      id: 'duloxetine',
+      name: 'Duloxetine',
+      class: 'SNRI',
+      monitoring: [
+        {
+          item: 'Blood pressure',
+          frequency: 'Baseline and each visit',
+          notes: 'SNRIs can raise BP; monitor especially in hypertensive patients',
+        },
+        {
+          item: 'Liver function tests (LFTs)',
+          frequency: 'Baseline',
+          notes: 'Contraindicated in hepatic impairment (substantial alcohol use or chronic liver disease)',
+        },
+        {
+          item: 'Suicidal ideation screening',
+          frequency: 'Each visit for first 4 weeks, then as needed',
+          notes: 'FDA black box warning: increased risk in young adults <24. Monitor for worsening depression or suicidality.',
+        },
+        {
+          item: 'Drug interaction check (MAOIs)',
+          frequency: 'Before starting',
+          notes: 'Contraindicated with MAOIs (at least 14 days after stopping MAOI). Also caution with other serotonergic agents.',
+        },
+      ],
+    },
+    {
+      id: 'milnacipran',
+      name: 'Milnacipran',
+      class: 'SNRI',
+      monitoring: [
+        {
+          item: 'Blood pressure and heart rate',
+          frequency: 'Baseline and periodically',
+          notes: 'Can cause sustained BP and HR elevation; monitor in patients with CV disease',
+        },
+        {
+          item: 'Suicidal ideation screening',
+          frequency: 'Each visit for first 4 weeks, then as needed',
+          notes: 'FDA black box warning: increased risk in young adults. Monitor for worsening mood or suicidality.',
+        },
+      ],
+    },
+    {
+      id: 'pregabalin',
+      name: 'Pregabalin',
+      class: 'Alpha-2-delta ligand',
+      monitoring: [
+        {
+          item: 'Weight',
+          frequency: 'Each visit',
+          notes: 'Weight gain is common; counsel on diet and activity',
+        },
+        {
+          item: 'Edema',
+          frequency: 'Each visit',
+          notes: 'Peripheral edema reported; assess for new or worsening swelling',
+        },
+        {
+          item: 'Dizziness and somnolence',
+          frequency: 'Each visit, especially early',
+          notes: 'Common CNS side effects; counsel on fall risk and driving',
+        },
+        {
+          item: 'Renal function (eGFR)',
+          frequency: 'Baseline and as needed',
+          notes: 'Dose adjustment required in renal impairment (CKD)',
+        },
+      ],
+    },
+    {
+      id: 'gabapentin',
+      name: 'Gabapentin',
+      class: 'Alpha-2-delta ligand',
+      monitoring: [
+        {
+          item: 'Renal function (eGFR)',
+          frequency: 'Baseline and as needed',
+          notes: 'Dose adjustment required in renal impairment',
+        },
+        {
+          item: 'Somnolence and dizziness',
+          frequency: 'Each visit, especially early',
+          notes: 'Counsel on fall risk, driving, and alcohol avoidance',
+        },
+        {
+          item: 'Weight',
+          frequency: 'Each visit',
+          notes: 'Weight gain possible; counsel on diet and activity',
+        },
+      ],
+    },
+    {
+      id: 'amitriptyline',
+      name: 'Amitriptyline',
+      class: 'Tricyclic antidepressant (low-dose)',
+      monitoring: [
+        {
+          item: 'ECG',
+          frequency: 'Baseline if cardiac risk factors (age >40, known arrhythmia, prolonged QT history)',
+          notes: 'QTc prolongation risk; contraindicated in recent MI or bundle branch block',
+        },
+        {
+          item: 'Anticholinergic side effects',
+          frequency: 'Each visit',
+          notes: 'Monitor for dry mouth, constipation, urinary retention, blurred vision; highest anticholinergic burden of the class',
+        },
+        {
+          item: 'Weight',
+          frequency: 'Each visit',
+          notes: 'Weight gain common even at low doses',
+        },
+        {
+          item: 'Orthostatic blood pressure',
+          frequency: 'Early visits',
+          notes: 'Orthostatic hypotension risk, especially in elderly',
+        },
+      ],
+    },
+    {
+      id: 'cyclobenzaprine',
+      name: 'Cyclobenzaprine',
+      class: 'Muscle relaxant / TCA-related',
+      monitoring: [
+        {
+          item: 'Anticholinergic side effects',
+          frequency: 'Each visit',
+          notes: 'Similar profile to amitriptyline: dry mouth, urinary retention, constipation, somnolence',
+        },
+        {
+          item: 'Drug interaction check (MAOIs)',
+          frequency: 'Before starting',
+          notes: 'Contraindicated with MAOIs and within 14 days of MAOI discontinuation; hyperpyretic crisis risk',
+        },
+        {
+          item: 'Cardiac risk assessment',
+          frequency: 'Before starting',
+          notes: 'Avoid in patients with arrhythmias, heart block, or heart failure due to TCA-like cardiac effects',
+        },
+      ],
+    },
+  ],
   gout: [
     {
       id: 'allopurinol',
