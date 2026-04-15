@@ -64,7 +64,7 @@ function AxSpAMedications({ medications, dispatch }) {
 }
 
 export function AxSpAModule({ currentSection, answers, scores, medications, monitoringStatus, dispatch }) {
-  const calculatedScores = useScoring(answers);
+  const calculatedScores = useScoring(answers, 'axspa');
 
   const handleAnswer = (id, value) => {
     dispatch({ type: 'SET_ANSWER', payload: { id, value } });

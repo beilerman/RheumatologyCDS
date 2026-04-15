@@ -1,10 +1,10 @@
 const CONDITIONS = [
   { id: 'ra', label: 'Rheumatoid Arthritis', enabled: true },
   { id: 'gout', label: 'Gout', enabled: true },
-  { id: 'psa', label: 'Psoriatic Arthritis', enabled: false, badge: 'Phase 2' },
-  { id: 'axspa', label: 'Axial SpA', enabled: false, badge: 'Phase 2' },
+  { id: 'psa', label: 'Psoriatic Arthritis', enabled: true },
+  { id: 'axspa', label: 'Axial SpA', enabled: true },
   { id: 'uia', label: 'Undiff. Inflammatory Arthritis', enabled: true },
-  { id: 'fibro', label: 'Fibromyalgia', enabled: false, badge: 'Phase 2' },
+  { id: 'fibro', label: 'Fibromyalgia', enabled: true },
   { id: 'sle', label: 'SLE', enabled: false, badge: 'Coming Soon' },
 ];
 

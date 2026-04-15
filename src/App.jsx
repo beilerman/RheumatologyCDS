@@ -11,6 +11,7 @@ import { GoutModule } from './components/conditions/Gout/GoutModule.jsx';
 import { PsAModule } from './components/conditions/PsoriaticArthritis/PSAModule.jsx';
 import { AxSpAModule } from './components/conditions/AxialSpondyloarthritis/AxSpAModule.jsx';
 import { UIAModule } from './components/conditions/UndifferentiatedIA/UIAModule.jsx';
+import { FibroModule } from './components/conditions/Fibromyalgia/FibroModule.jsx';
 
 import { RecommendationCard } from './components/shared/RecommendationCard.jsx';
 import { AlertBanner } from './components/shared/AlertBanner.jsx';
@@ -122,6 +123,19 @@ function MainContent({ state, dispatch }) {
       <UIAModule
         currentSection={currentSection}
         answers={answers}
+        medications={medications}
+        monitoringStatus={monitoringStatus}
+        dispatch={dispatch}
+      />
+    );
+  }
+
+  if (condition === 'fibro') {
+    return (
+      <FibroModule
+        currentSection={currentSection}
+        answers={answers}
+        scores={scores}
         medications={medications}
         monitoringStatus={monitoringStatus}
         dispatch={dispatch}

@@ -64,7 +64,7 @@ function RAMedications({ medications, answers, dispatch }) {
 }
 
 export function RAModule({ currentSection, answers, scores, medications, monitoringStatus, dispatch }) {
-  const calculatedScores = useScoring(answers);
+  const calculatedScores = useScoring(answers, 'ra');
 
   const handleAnswer = (id, value) => {
     dispatch({ type: 'SET_ANSWER', payload: { id, value } });

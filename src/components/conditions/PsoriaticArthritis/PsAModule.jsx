@@ -64,7 +64,7 @@ function PsAMedications({ medications, dispatch }) {
 }
 
 export function PsAModule({ currentSection, answers, scores, medications, monitoringStatus, dispatch }) {
-  const calculatedScores = useScoring(answers);
+  const calculatedScores = useScoring(answers, 'psa');
 
   const handleAnswer = (id, value) => {
     dispatch({ type: 'SET_ANSWER', payload: { id, value } });

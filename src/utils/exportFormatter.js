@@ -39,6 +39,48 @@ function formatScores(state) {
     if (symptoms.length) lines.push(symptoms.join(', '));
   }
 
+  if (condition === 'psa') {
+    if (scores.dapsa?.score != null) lines.push(`DAPSA: ${scores.dapsa.score} (${scores.dapsa.category})`);
+    const symptoms = [];
+    if (answers['psa-sjc66'] != null) symptoms.push(`SJC66: ${answers['psa-sjc66']}`);
+    if (answers['psa-tjc68'] != null) symptoms.push(`TJC68: ${answers['psa-tjc68']}`);
+    if (answers['psa-skin-severity']) symptoms.push(`Skin: ${answers['psa-skin-severity']}`);
+    if (answers['psa-dominant-domain']) symptoms.push(`Dominant domain: ${answers['psa-dominant-domain']}`);
+    if (symptoms.length) lines.push(symptoms.join(', '));
+  }
+
+  if (condition === 'axspa') {
+    if (scores.basdai?.score != null) lines.push(`BASDAI: ${scores.basdai.score} (${scores.basdai.category})`);
+    if (scores.asdasCrp?.score != null) lines.push(`ASDAS-CRP: ${scores.asdasCrp.score} (${scores.asdasCrp.category})`);
+    if (scores.asdasEsr?.score != null) lines.push(`ASDAS-ESR: ${scores.asdasEsr.score} (${scores.asdasEsr.category})`);
+    const symptoms = [];
+    if (answers['axspa-morning-stiffness-duration'] != null) symptoms.push(`Morning stiffness: ${answers['axspa-morning-stiffness-duration']} min`);
+    if (symptoms.length) lines.push(symptoms.join(', '));
+  }
+
+  if (condition === 'uia') {
+    const features = [];
+    if (answers['uia-joint-pattern']) features.push(`Joint pattern: ${answers['uia-joint-pattern']}`);
+    if (answers['uia-symptom-duration']) features.push(`Duration: ${answers['uia-symptom-duration']}`);
+    if (answers['uia-rf-positive']) features.push('RF+');
+    if (answers['uia-anti-ccp-positive']) features.push('Anti-CCP+');
+    if (answers['uia-ana-positive']) features.push('ANA+');
+    if (answers['uia-hla-b27']) features.push('HLA-B27+');
+    if (features.length) lines.push(features.join(', '));
+  }
+
+  if (condition === 'fibro') {
+    if (scores.fsq?.score != null) {
+      lines.push(`FSQ: ${scores.fsq.score} (${scores.fsq.category})`);
+      lines.push(`Diagnostic criteria met: ${scores.fsq.diagnosticCriteriaMet ? 'Yes' : 'No'}`);
+    }
+    const symptoms = [];
+    if (answers['fibro-pain-severity'] != null) symptoms.push(`Pain: ${answers['fibro-pain-severity']}/10`);
+    if (answers['fibro-fatigue'] != null) symptoms.push(`Fatigue: ${answers['fibro-fatigue']}/10`);
+    if (answers['fibro-sleep-quality'] != null) symptoms.push(`Sleep: ${answers['fibro-sleep-quality']}/10`);
+    if (symptoms.length) lines.push(symptoms.join(', '));
+  }
+
   if (condition === 'gout') {
     if (answers['gout-serum-urate'] != null)
       lines.push(`Serum Urate: ${answers['gout-serum-urate']} mg/dL`);
