@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: #1e3a5f;
+  --color-bg: #f8f9fa;
+  --color-green: #16a34a;
+  --color-yellow: #eab308;
+  --color-red: #dc2626;
+  --color-info: #3b82f6;
+}
+
+body {
+  background-color: var(--color-bg);
+  min-width: 1024px;
+}
