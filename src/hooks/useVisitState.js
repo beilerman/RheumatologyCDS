@@ -3,6 +3,9 @@ import { getRecommendations } from '../utils/recommendationEngine.js';
 import { evaluateEscalation } from '../data/escalationCriteria.js';
 import { raRules } from '../components/conditions/RheumatoidArthritis/RARules.js';
 import { goutRules } from '../components/conditions/Gout/GoutRules.js';
+import { psaRules } from '../components/conditions/PsoriaticArthritis/PsARules.js';
+import { axspaRules } from '../components/conditions/AxialSpondyloarthritis/AxSpARules.js';
+import { uiaRules } from '../components/conditions/UndifferentiatedIA/UIARules.js';
 import { GUIDELINES } from '../data/guidelines.js';
 
 const SECTIONS = [
@@ -69,7 +72,7 @@ function reducer(state, action) {
   }
 }
 
-const rulesByCondition = { ra: raRules, gout: goutRules };
+const rulesByCondition = { ra: raRules, gout: goutRules, psa: psaRules, axspa: axspaRules, uia: uiaRules };
 
 export function useVisitState() {
   const [state, dispatch] = useReducer(reducer, null, createInitialState);

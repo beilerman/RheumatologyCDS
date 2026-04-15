@@ -3,7 +3,7 @@ const CONDITIONS = [
   { id: 'gout', label: 'Gout', enabled: true },
   { id: 'psa', label: 'Psoriatic Arthritis', enabled: false, badge: 'Phase 2' },
   { id: 'axspa', label: 'Axial SpA', enabled: false, badge: 'Phase 2' },
-  { id: 'uia', label: 'Undiff. Inflammatory Arthritis', enabled: false, badge: 'Phase 2' },
+  { id: 'uia', label: 'Undiff. Inflammatory Arthritis', enabled: true },
   { id: 'fibro', label: 'Fibromyalgia', enabled: false, badge: 'Phase 2' },
   { id: 'sle', label: 'SLE', enabled: false, badge: 'Coming Soon' },
 ];

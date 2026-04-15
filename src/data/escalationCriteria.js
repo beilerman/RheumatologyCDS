@@ -212,11 +212,69 @@ const axspaEscalation = [
   },
 ];
 
+const uiaEscalation = [
+  // RED FLAGS
+  {
+    id: 'uia-red-rapid-destruction',
+    level: 'red',
+    condition: (state) => state.answers['uia-erosive-changes'] === true,
+    message: 'Rapidly progressive joint destruction (erosive changes). Urgent rheumatology referral required.',
+    guideline: 'EULAR_EARLY_ARTHRITIS_2016',
+  },
+  {
+    id: 'uia-red-systemic',
+    level: 'red',
+    condition: (state) => state.answers['uia-systemic-features'] === true,
+    message: 'New systemic features (fever, cytopenias, serositis). Consider SLE or vasculitis. Urgent evaluation required.',
+    guideline: 'EULAR_EARLY_ARTHRITIS_2016',
+  },
+  // YELLOW FLAGS
+  {
+    id: 'uia-yellow-evolving',
+    level: 'yellow',
+    condition: (state) => {
+      const towardRA =
+        state.answers['uia-rf-positive'] === true &&
+        state.answers['uia-anti-ccp-positive'] === true;
+      const towardPsA =
+        state.answers['uia-psoriasis'] === true &&
+        (state.answers['uia-joint-pattern'] === 'asymmetric' ||
+          state.answers['uia-dactylitis'] === true ||
+          state.answers['uia-enthesitis'] === true);
+      const towardAxSpA =
+        state.answers['uia-inflammatory-back-pain'] === true &&
+        state.answers['uia-hla-b27'] === true;
+      return towardRA || towardPsA || towardAxSpA;
+    },
+    message: 'Features evolving toward classifiable diagnosis (RA, PsA, or axSpA). Route to rheumatology for reclassification.',
+    guideline: 'EULAR_EARLY_ARTHRITIS_2016',
+  },
+  {
+    id: 'uia-yellow-csdmard-inadequate',
+    level: 'yellow',
+    condition: (state) =>
+      state.answers['uia-treatment-status'] === 'on-csDMARD' &&
+      state.answers['uia-symptom-duration'] === '>6m',
+    message: 'Inadequate csDMARD response at >6 months. Rheumatology follow-up for treatment escalation.',
+    guideline: 'EULAR_EARLY_ARTHRITIS_2016',
+  },
+  {
+    id: 'uia-yellow-uncertainty-prolonged',
+    level: 'yellow',
+    condition: (state) =>
+      state.answers['uia-symptom-duration'] === '>6m' &&
+      state.answers['uia-inflammatory-arthritis-confirmed'] !== true,
+    message: 'Diagnostic uncertainty persisting >6 months. Reassess and consider specialist referral.',
+    guideline: 'EULAR_EARLY_ARTHRITIS_2016',
+  },
+];
+
 const escalationByCondition = {
   ra: raEscalation,
   gout: goutEscalation,
   psa: psaEscalation,
   axspa: axspaEscalation,
+  uia: uiaEscalation,
 };
 
 export function evaluateEscalation(state) {
