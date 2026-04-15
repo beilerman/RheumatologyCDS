@@ -1,0 +1,260 @@
+export const GOUT_QUESTION_GROUPS = [
+  {
+    id: 'gout-status',
+    title: 'Current Status',
+    section: 'symptoms',
+    questions: [
+      {
+        id: 'gout-current-flare',
+        label: 'Currently in a gout flare?',
+        type: 'toggle',
+      },
+      {
+        id: 'gout-flare-frequency',
+        label: 'Number of flares in the past 12 months',
+        type: 'numeric',
+        min: 0,
+        max: 52,
+      },
+      {
+        id: 'gout-flare-joints',
+        label: 'Typical flare joints (select all that apply)',
+        type: 'multiselect',
+        options: [
+          { value: 'first-mtp', label: 'First MTP (podagra)' },
+          { value: 'ankle', label: 'Ankle' },
+          { value: 'knee', label: 'Knee' },
+          { value: 'wrist', label: 'Wrist' },
+          { value: 'finger', label: 'Finger' },
+          { value: 'elbow', label: 'Elbow' },
+          { value: 'other', label: 'Other' },
+        ],
+      },
+      {
+        id: 'gout-tophi',
+        label: 'Tophi present?',
+        type: 'toggle',
+        followUp: {
+          id: 'gout-tophi-trend',
+          label: 'Tophi trend',
+          type: 'radio',
+          options: [
+            { value: 'growing', label: 'Growing' },
+            { value: 'stable', label: 'Stable' },
+            { value: 'shrinking', label: 'Shrinking' },
+          ],
+        },
+      },
+      {
+        id: 'gout-pain',
+        label: 'Current pain (0–10)',
+        type: 'slider',
+        min: 0,
+        max: 10,
+      },
+      {
+        id: 'gout-functional-limitation',
+        label: 'Functional limitation',
+        type: 'radio',
+        options: [
+          { value: 'none', label: 'None' },
+          { value: 'mild', label: 'Mild' },
+          { value: 'moderate', label: 'Moderate' },
+          { value: 'severe', label: 'Severe' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'gout-lifestyle',
+    title: 'Lifestyle Factors',
+    section: 'symptoms',
+    questions: [
+      {
+        id: 'gout-alcohol',
+        label: 'Alcohol consumption',
+        type: 'dropdown',
+        options: [
+          { value: 'none', label: 'None' },
+          { value: 'occasional', label: 'Occasional (<2 drinks/week)' },
+          { value: 'moderate', label: 'Moderate (2–7 drinks/week)' },
+          { value: 'heavy', label: 'Heavy (>7 drinks/week)' },
+        ],
+      },
+      {
+        id: 'gout-purine-diet',
+        label: 'Purine-restricted diet adherence',
+        type: 'radio',
+        options: [
+          { value: 'adherent', label: 'Adherent' },
+          { value: 'partially', label: 'Partially adherent' },
+          { value: 'non-adherent', label: 'Non-adherent' },
+        ],
+      },
+      {
+        id: 'gout-hfcs-intake',
+        label: 'High-fructose corn syrup (HFCS) intake',
+        type: 'radio',
+        options: [
+          { value: 'none', label: 'None' },
+          { value: 'occasional', label: 'Occasional' },
+          { value: 'frequent', label: 'Frequent' },
+        ],
+      },
+      {
+        id: 'gout-hydration',
+        label: 'Daily hydration status',
+        type: 'radio',
+        options: [
+          { value: 'adequate', label: 'Adequate (>2L/day)' },
+          { value: 'inadequate', label: 'Inadequate' },
+        ],
+      },
+      {
+        id: 'gout-weight-change',
+        label: 'Weight change since last visit',
+        type: 'radio',
+        options: [
+          { value: 'loss', label: 'Weight loss' },
+          { value: 'stable', label: 'Stable' },
+          { value: 'gain', label: 'Weight gain' },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'gout-comorbidities',
+    title: 'Comorbidities',
+    section: 'symptoms',
+    questions: [
+      {
+        id: 'gout-ckd-stage',
+        label: 'CKD stage',
+        type: 'dropdown',
+        options: [
+          { value: 'none', label: 'None (eGFR >60)' },
+          { value: '1', label: 'Stage 1 (eGFR >90 with kidney damage)' },
+          { value: '2', label: 'Stage 2 (eGFR 60–89)' },
+          { value: '3a', label: 'Stage 3a (eGFR 45–59)' },
+          { value: '3b', label: 'Stage 3b (eGFR 30–44)' },
+          { value: '4', label: 'Stage 4 (eGFR 15–29)' },
+          { value: '5', label: 'Stage 5 (eGFR <15 or dialysis)' },
+        ],
+      },
+      {
+        id: 'gout-hypertension',
+        label: 'Hypertension?',
+        type: 'toggle',
+      },
+      {
+        id: 'gout-cvd',
+        label: 'Cardiovascular disease (CAD, HF, stroke)?',
+        type: 'toggle',
+      },
+      {
+        id: 'gout-diabetes',
+        label: 'Diabetes mellitus?',
+        type: 'toggle',
+      },
+      {
+        id: 'gout-nephrolithiasis',
+        label: 'History of nephrolithiasis (kidney stones)?',
+        type: 'toggle',
+      },
+    ],
+  },
+  {
+    id: 'gout-labs',
+    title: 'Laboratory Values',
+    section: 'scoring',
+    questions: [
+      {
+        id: 'gout-serum-urate',
+        label: 'Serum urate (mg/dL)',
+        type: 'numeric',
+        min: 0,
+        max: 20,
+        step: 0.1,
+      },
+      {
+        id: 'gout-egfr',
+        label: 'eGFR (mL/min/1.73m²)',
+        type: 'numeric',
+        min: 0,
+        max: 200,
+      },
+      {
+        id: 'gout-creatinine',
+        label: 'Serum creatinine (mg/dL)',
+        type: 'numeric',
+        min: 0,
+        max: 20,
+        step: 0.1,
+      },
+    ],
+  },
+  {
+    id: 'gout-ult',
+    title: 'Urate-Lowering Therapy',
+    section: 'medications',
+    questions: [
+      {
+        id: 'gout-on-ult',
+        label: 'Currently on urate-lowering therapy (ULT)?',
+        type: 'toggle',
+      },
+      {
+        id: 'gout-ult-medication',
+        label: 'ULT medication',
+        type: 'dropdown',
+        options: [
+          { value: 'allopurinol', label: 'Allopurinol' },
+          { value: 'febuxostat', label: 'Febuxostat' },
+          { value: 'probenecid', label: 'Probenecid' },
+          { value: 'other', label: 'Other' },
+        ],
+        showWhen: (answers) => answers['gout-on-ult'] === true,
+      },
+      {
+        id: 'gout-ult-dose',
+        label: 'Current ULT dose',
+        type: 'text',
+        showWhen: (answers) => answers['gout-on-ult'] === true,
+      },
+      {
+        id: 'gout-ult-adherence',
+        label: 'ULT adherence',
+        type: 'radio',
+        options: [
+          { value: 'good', label: 'Good (rarely missed doses)' },
+          { value: 'partial', label: 'Partial (occasional missed doses)' },
+          { value: 'poor', label: 'Poor (frequently missed)' },
+        ],
+        showWhen: (answers) => answers['gout-on-ult'] === true,
+      },
+      {
+        id: 'gout-hla-b5801-tested',
+        label: 'HLA-B*5801 testing done?',
+        type: 'toggle',
+        showWhen: (answers) => !answers['gout-on-ult'],
+      },
+      {
+        id: 'gout-flare-prophylaxis',
+        label: 'On flare prophylaxis (colchicine/NSAID)?',
+        type: 'toggle',
+        showWhen: (answers) => answers['gout-on-ult'] === true,
+      },
+      {
+        id: 'gout-allopurinol-hypersensitivity',
+        label: 'Suspected allopurinol hypersensitivity syndrome?',
+        type: 'toggle',
+        showWhen: (answers) => answers['gout-ult-medication'] === 'allopurinol',
+      },
+      {
+        id: 'gout-suspected-septic-joint',
+        label: 'Suspected septic joint (vs. gout flare)?',
+        type: 'toggle',
+      },
+    ],
+  },
+];
