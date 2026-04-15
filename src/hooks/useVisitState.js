@@ -14,14 +14,27 @@ const SECTIONS = [
   'monitoring', 'recommendations', 'escalation', 'summary',
 ];
 
-function createInitialState() {
+function buildSectionStatus(currentSection, completedSections = []) {
+  const completed = new Set(completedSections);
   const sectionStatus = {};
-  SECTIONS.forEach((s) => (sectionStatus[s] = 'pending'));
-  sectionStatus['condition-select'] = 'in-progress';
+
+  SECTIONS.forEach((section) => {
+    if (section === currentSection) {
+      sectionStatus[section] = section === 'summary' ? 'complete' : 'in-progress';
+      return;
+    }
+
+    sectionStatus[section] = completed.has(section) ? 'complete' : 'pending';
+  });
+
+  return sectionStatus;
+}
+
+function createInitialState() {
   return {
     condition: null,
     currentSection: 'condition-select',
-    sectionStatus,
+    sectionStatus: buildSectionStatus('condition-select'),
     answers: {},
     scores: {},
     medications: { current: [], doses: {} },
@@ -33,14 +46,11 @@ function createInitialState() {
 function reducer(state, action) {
   switch (action.type) {
     case 'SET_CONDITION': {
-      const sectionStatus = { ...state.sectionStatus };
-      sectionStatus['condition-select'] = 'complete';
-      sectionStatus['symptoms'] = 'in-progress';
       return {
         ...state,
         condition: action.payload,
         currentSection: 'symptoms',
-        sectionStatus,
+        sectionStatus: buildSectionStatus('symptoms', ['condition-select']),
         answers: {},
         scores: {},
         medications: { current: [], doses: {} },
@@ -57,14 +67,22 @@ function reducer(state, action) {
     case 'SET_MONITORING_STATUS':
       return { ...state, monitoringStatus: action.payload };
     case 'SET_SECTION': {
-      const sectionStatus = { ...state.sectionStatus };
       const prevIdx = SECTIONS.indexOf(state.currentSection);
       const nextIdx = SECTIONS.indexOf(action.payload);
-      if (nextIdx > prevIdx && state.sectionStatus[state.currentSection] === 'in-progress') {
-        sectionStatus[state.currentSection] = 'complete';
+
+      const completedSections = Object.entries(state.sectionStatus)
+        .filter(([, status]) => status === 'complete')
+        .map(([section]) => section);
+
+      if (nextIdx > prevIdx || action.payload === 'summary') {
+        completedSections.push(state.currentSection);
       }
-      sectionStatus[action.payload] = 'in-progress';
-      return { ...state, currentSection: action.payload, sectionStatus };
+
+      return {
+        ...state,
+        currentSection: action.payload,
+        sectionStatus: buildSectionStatus(action.payload, completedSections),
+      };
     }
     case 'RESET_VISIT':
       return createInitialState();
@@ -85,4 +103,4 @@ export function useVisitState() {
   return [{ ...state, recommendations, escalation }, dispatch];
 }
 
-export { SECTIONS };
+export { createInitialState, reducer, SECTIONS };

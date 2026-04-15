@@ -85,6 +85,19 @@ describe('Gout Escalation: Yellow flags', () => {
     expect(result.level).toBe('yellow');
   });
 
+  it('does not apply the allopurinol dose escalation flag to other ULT agents', () => {
+    const state = makeState('gout', {
+      answers: {
+        'gout-on-ult': true,
+        'gout-serum-urate': 7.5,
+        'gout-ult-medication': 'probenecid',
+        'gout-ult-dose': '500 mg twice daily',
+      },
+    });
+    const result = evaluateEscalation(state);
+    expect(result.flags.some((f) => f.id === 'gout-yellow-not-at-target')).toBe(false);
+  });
+
   it('flags poor ULT adherence', () => {
     const state = makeState('gout', {
       answers: {

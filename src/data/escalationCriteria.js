@@ -1,3 +1,10 @@
+function parseDoseAmount(value) {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value !== 'string') return null;
+  const match = value.match(/(\d+(?:\.\d+)?)/);
+  return match ? Number(match[1]) : null;
+}
+
 const raEscalation = [
   // RED FLAGS
   {
@@ -67,12 +74,17 @@ const goutEscalation = [
   {
     id: 'gout-yellow-not-at-target',
     level: 'yellow',
-    condition: (state) =>
-      state.answers['gout-on-ult'] === true &&
-      state.answers['gout-serum-urate'] != null &&
-      state.answers['gout-serum-urate'] >= 6 &&
-      state.answers['gout-ult-dose'] &&
-      parseInt(state.answers['gout-ult-dose'], 10) >= 300,
+    condition: (state) => {
+      const doseAmount = parseDoseAmount(state.answers['gout-ult-dose']);
+      return (
+        state.answers['gout-on-ult'] === true &&
+        state.answers['gout-ult-medication'] === 'allopurinol' &&
+        state.answers['gout-serum-urate'] != null &&
+        state.answers['gout-serum-urate'] >= 6 &&
+        doseAmount != null &&
+        doseAmount >= 300
+      );
+    },
     message: 'Not at serum urate target despite allopurinol >=300 mg/day. Schedule rheumatology follow-up to discuss dose optimization or alternative ULT.',
     guideline: 'ACR_GOUT_2020',
   },

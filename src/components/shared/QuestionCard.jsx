@@ -28,7 +28,7 @@ function Tooltip({ text }) {
   );
 }
 
-function QuestionInput({ question, value, onAnswer }) {
+function QuestionInput({ question, value, onAnswer, answers }) {
   const { id, type, min, max, step, options, followUp } = question;
 
   const handleChange = (val) => onAnswer(id, val);
@@ -89,8 +89,9 @@ function QuestionInput({ question, value, onAnswer }) {
             <label className="block text-xs text-gray-600 mb-1">{followUp.label}</label>
             <QuestionInput
               question={followUp}
-              value={undefined}
+              value={answers?.[followUp.id]}
               onAnswer={onAnswer}
+              answers={answers}
             />
           </div>
         )}
@@ -197,6 +198,7 @@ export function QuestionCard({ group, answers, onAnswer }) {
                 question={q}
                 value={answers[q.id]}
                 onAnswer={onAnswer}
+                answers={answers}
               />
             </div>
           );
