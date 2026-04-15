@@ -151,10 +151,72 @@ const psaEscalation = [
   },
 ];
 
+const axspaEscalation = [
+  // RED FLAGS
+  {
+    id: 'axspa-red-uveitis',
+    level: 'red',
+    condition: (state) => state.answers['axspa-uveitis-current'] === true,
+    message: 'Urgent ophthalmology referral for active uveitis. Document and escalate immediately.',
+    guideline: 'ACR_axSpA_2019',
+  },
+  {
+    id: 'axspa-red-ibd',
+    level: 'red',
+    condition: (state) => state.answers['axspa-ibd-symptoms'] === true,
+    message: 'GI symptoms suggestive of IBD. Gastroenterology referral required. Caution with IL-17 inhibitors.',
+    guideline: 'ACR_axSpA_2019',
+  },
+  {
+    id: 'axspa-red-neuro',
+    level: 'red',
+    condition: (state) => state.answers['axspa-neurological-symptoms'] === true,
+    message: 'Neurological symptoms present. Urgent evaluation — rule out cauda equina syndrome or atlantoaxial instability.',
+    guideline: 'ACR_axSpA_2019',
+  },
+  {
+    id: 'axspa-red-very-high-asdas',
+    level: 'red',
+    condition: (state) => {
+      const da = state.scores?.asdasCrp?.category;
+      const onBiologic = ['on-TNFi', 'failed-TNFi', 'on-IL17i', 'failed-IL17i'].includes(
+        state.answers['axspa-treatment-status']
+      );
+      return da === 'Very High' && onBiologic;
+    },
+    message: 'Very high disease activity (ASDAS Very High) despite biologic therapy. Urgent rheumatology review for regimen change.',
+    guideline: 'ACR_axSpA_2019',
+  },
+  // YELLOW FLAGS
+  {
+    id: 'axspa-yellow-active-on-treatment',
+    level: 'yellow',
+    condition: (state) => {
+      const basdai = state.scores?.basdai?.category;
+      const asdas = state.scores?.asdasCrp?.category;
+      const active = basdai === 'Active' || ['High', 'Very High'].includes(asdas);
+      const onTreatment = ['on-nsaid', 'on-TNFi', 'on-IL17i'].includes(
+        state.answers['axspa-treatment-status']
+      );
+      return active && onTreatment;
+    },
+    message: 'Active disease activity on current treatment regimen. Consider treatment escalation at next visit.',
+    guideline: 'ACR_axSpA_2019',
+  },
+  {
+    id: 'axspa-yellow-biologic-needed',
+    level: 'yellow',
+    condition: (state) => state.answers['axspa-treatment-status'] === 'failed-nsaid',
+    message: 'NSAID failure documented. Biologic initiation discussion needed. Refer to rheumatology if not already established.',
+    guideline: 'ACR_axSpA_2019',
+  },
+];
+
 const escalationByCondition = {
   ra: raEscalation,
   gout: goutEscalation,
   psa: psaEscalation,
+  axspa: axspaEscalation,
 };
 
 export function evaluateEscalation(state) {
