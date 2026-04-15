@@ -69,3 +69,47 @@ export function calculateRAPID3({ function0to10, pain0to10, globalVAS0to10 }) {
   ]);
   return { score, category, error: null };
 }
+
+export function calculateDAPSA({ sjc66, tjc68, painVAS, patientGlobalVAS, crp }) {
+  if (hasMissing([sjc66, tjc68, painVAS, patientGlobalVAS, crp])) return MISSING;
+  const score = round1(sjc66 + tjc68 + painVAS + patientGlobalVAS + crp);
+  const category = categorize(score, [
+    [4, 'Remission'], [14, 'Low'], [28, 'Moderate'], [Infinity, 'High'],
+  ]);
+  return { score, category, error: null };
+}
+
+export function calculateBASDAI({ q1Fatigue, q2SpinalPain, q3JointPain, q4Enthesitis, q5MorningStiffnessSeverity, q6MorningStiffnessDuration }) {
+  if (hasMissing([q1Fatigue, q2SpinalPain, q3JointPain, q4Enthesitis, q5MorningStiffnessSeverity, q6MorningStiffnessDuration])) return MISSING;
+  const meanQ1to4 = (q1Fatigue + q2SpinalPain + q3JointPain + q4Enthesitis) / 4;
+  const meanQ5to6 = (q5MorningStiffnessSeverity + q6MorningStiffnessDuration) / 2;
+  const score = round1((meanQ1to4 + meanQ5to6) / 2);
+  const category = score >= 4 ? 'Active' : 'Inactive';
+  return { score, category, error: null };
+}
+
+export function calculateASDASCRP({ backPain, morningStiffness, patientGlobal, peripheralPain, crp }) {
+  if (hasMissing([backPain, morningStiffness, patientGlobal, peripheralPain, crp])) return MISSING;
+  const score = round1(
+    0.121 * backPain + 0.110 * morningStiffness + 0.073 * patientGlobal + 0.058 * peripheralPain + 0.579 * Math.log(crp + 1)
+  );
+  const category = score < 1.3 ? 'Inactive' : score < 2.1 ? 'Low' : score <= 3.5 ? 'High' : 'Very High';
+  return { score, category, error: null };
+}
+
+export function calculateASDASSER({ backPain, morningStiffness, patientGlobal, peripheralPain, esr }) {
+  if (hasMissing([backPain, morningStiffness, patientGlobal, peripheralPain, esr])) return MISSING;
+  const score = round1(
+    0.079 * backPain + 0.069 * morningStiffness + 0.113 * patientGlobal + 0.086 * peripheralPain + 0.293 * Math.sqrt(esr)
+  );
+  const category = score < 1.3 ? 'Inactive' : score < 2.1 ? 'Low' : score <= 3.5 ? 'High' : 'Very High';
+  return { score, category, error: null };
+}
+
+export function calculateFSQ({ wpiScore, sssScore }) {
+  if (hasMissing([wpiScore, sssScore])) return MISSING;
+  const score = wpiScore + sssScore;
+  const category = score < 12 ? 'Mild' : score <= 20 ? 'Moderate' : 'Severe';
+  const diagnosticCriteriaMet = (wpiScore >= 7 && sssScore >= 5) || (wpiScore >= 4 && wpiScore <= 6 && sssScore >= 9);
+  return { score, category, diagnosticCriteriaMet, error: null };
+}

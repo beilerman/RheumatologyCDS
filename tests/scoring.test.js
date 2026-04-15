@@ -4,6 +4,7 @@ import {
   calculateDAS28ESR,
   calculateDAS28CRP,
   calculateRAPID3,
+  calculateDAPSA, calculateBASDAI, calculateASDASCRP, calculateASDASSER, calculateFSQ
 } from '../src/utils/scoreCalculations.js';
 
 describe('calculateCDAI', () => {
@@ -124,5 +125,113 @@ describe('calculateRAPID3', () => {
   it('returns error for missing inputs', () => {
     const result = calculateRAPID3({ function0to10: 3, pain0to10: null, globalVAS0to10: 2 });
     expect(result.error).toBe('Missing required inputs');
+  });
+});
+
+describe('calculateDAPSA', () => {
+  it('returns Remission for score <= 4', () => {
+    const result = calculateDAPSA({ sjc66: 0, tjc68: 1, painVAS: 1, patientGlobalVAS: 1, crp: 0.5 });
+    expect(result.score).toBe(3.5);
+    expect(result.category).toBe('Remission');
+    expect(result.error).toBeNull();
+  });
+
+  it('returns Low for score > 4 and <= 14', () => {
+    const result = calculateDAPSA({ sjc66: 2, tjc68: 3, painVAS: 3, patientGlobalVAS: 2, crp: 1.5 });
+    expect(result.score).toBe(11.5);
+    expect(result.category).toBe('Low');
+  });
+
+  it('returns Moderate for score > 14 and <= 28', () => {
+    const result = calculateDAPSA({ sjc66: 5, tjc68: 6, painVAS: 5, patientGlobalVAS: 4, crp: 2 });
+    expect(result.score).toBe(22);
+    expect(result.category).toBe('Moderate');
+  });
+
+  it('returns High for score > 28', () => {
+    const result = calculateDAPSA({ sjc66: 10, tjc68: 10, painVAS: 7, patientGlobalVAS: 6, crp: 3 });
+    expect(result.score).toBe(36);
+    expect(result.category).toBe('High');
+  });
+
+  it('returns error for missing inputs', () => {
+    const result = calculateDAPSA({ sjc66: 2, tjc68: null, painVAS: 3, patientGlobalVAS: 2, crp: 1 });
+    expect(result.error).toBe('Missing required inputs');
+  });
+});
+
+describe('calculateBASDAI', () => {
+  it('calculates correctly (mean of Q1-4 + mean of Q5-6, divided by 2)', () => {
+    const result = calculateBASDAI({ q1Fatigue: 6, q2SpinalPain: 5, q3JointPain: 4, q4Enthesitis: 3, q5MorningStiffnessSeverity: 7, q6MorningStiffnessDuration: 5 });
+    expect(result.score).toBe(5.3);
+    expect(result.category).toBe('Active');
+  });
+
+  it('returns Inactive for score < 4', () => {
+    const result = calculateBASDAI({ q1Fatigue: 2, q2SpinalPain: 1, q3JointPain: 1, q4Enthesitis: 1, q5MorningStiffnessSeverity: 2, q6MorningStiffnessDuration: 1 });
+    expect(result.score).toBeLessThan(4);
+    expect(result.category).toBe('Inactive');
+  });
+
+  it('returns error for missing inputs', () => {
+    const result = calculateBASDAI({ q1Fatigue: 6, q2SpinalPain: null, q3JointPain: 4, q4Enthesitis: 3, q5MorningStiffnessSeverity: 7, q6MorningStiffnessDuration: 5 });
+    expect(result.error).toBe('Missing required inputs');
+  });
+});
+
+describe('calculateASDASCRP', () => {
+  it('calculates correctly for known inputs', () => {
+    const result = calculateASDASCRP({ backPain: 5, morningStiffness: 4, patientGlobal: 6, peripheralPain: 3, crp: 1.5 });
+    expect(result.score).toBeCloseTo(2.2, 1);
+    expect(result.category).toBe('High');
+  });
+
+  it('returns Inactive for score < 1.3', () => {
+    const result = calculateASDASCRP({ backPain: 1, morningStiffness: 0, patientGlobal: 1, peripheralPain: 0, crp: 0.2 });
+    expect(result.score).toBeLessThan(1.3);
+    expect(result.category).toBe('Inactive');
+  });
+
+  it('returns Very High for score > 3.5', () => {
+    const result = calculateASDASCRP({ backPain: 8, morningStiffness: 7, patientGlobal: 8, peripheralPain: 6, crp: 5 });
+    expect(result.category).toBe('Very High');
+  });
+
+  it('returns error for missing inputs', () => {
+    const result = calculateASDASCRP({ backPain: 5, morningStiffness: null, patientGlobal: 6, peripheralPain: 3, crp: 1.5 });
+    expect(result.error).toBe('Missing required inputs');
+  });
+});
+
+describe('calculateASDASSER', () => {
+  it('uses ESR instead of CRP', () => {
+    const result = calculateASDASSER({ backPain: 5, morningStiffness: 4, patientGlobal: 6, peripheralPain: 3, esr: 25 });
+    expect(result.score).not.toBeNull();
+    expect(result.error).toBeNull();
+  });
+});
+
+describe('calculateFSQ', () => {
+  it('returns correct WPI + SSS total', () => {
+    const result = calculateFSQ({ wpiScore: 10, sssScore: 8 });
+    expect(result.score).toBe(18);
+    expect(result.error).toBeNull();
+  });
+
+  it('classifies severity correctly', () => {
+    expect(calculateFSQ({ wpiScore: 3, sssScore: 3 }).category).toBe('Mild');
+    expect(calculateFSQ({ wpiScore: 7, sssScore: 5 }).category).toBe('Moderate');
+    expect(calculateFSQ({ wpiScore: 12, sssScore: 9 }).category).toBe('Severe');
+  });
+
+  it('returns error for missing inputs', () => {
+    const result = calculateFSQ({ wpiScore: null, sssScore: 8 });
+    expect(result.error).toBe('Missing required inputs');
+  });
+
+  it('validates diagnostic criteria met', () => {
+    expect(calculateFSQ({ wpiScore: 7, sssScore: 5 }).diagnosticCriteriaMet).toBe(true);
+    expect(calculateFSQ({ wpiScore: 5, sssScore: 9 }).diagnosticCriteriaMet).toBe(true);
+    expect(calculateFSQ({ wpiScore: 3, sssScore: 4 }).diagnosticCriteriaMet).toBe(false);
   });
 });
