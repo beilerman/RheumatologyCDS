@@ -5,6 +5,44 @@ import { RA_QUESTION_GROUPS } from './RAQuestions.js';
 import { useScoring } from '../../../hooks/useScoring.js';
 import { MEDICATIONS } from '../../../data/medications.js';
 
+function getMedSafetyWarnings(medId, medClass, answers) {
+  const warnings = [];
+  const ea = answers['ra-extraarticular'];
+  const hasILD = Array.isArray(ea) && ea.includes('ILD');
+  const hasHepB = answers['ra-hepatitis-b'] === true;
+  const hasHF = answers['ra-heart-failure'] === true;
+  const hasLymphoma = answers['ra-lymphoproliferative-history'] === true;
+  const hasInfection = answers['ra-prior-serious-infection'] === true;
+  const ageOver50CV = answers['ra-age-50-plus'] === true && answers['ra-cv-risk-factors'] === true;
+
+  if (medId === 'methotrexate' && hasILD) {
+    warnings.push('Caution: MTX associated with pulmonary toxicity in ILD patients.');
+  }
+  if (medClass === 'TNFi' && hasHF) {
+    warnings.push('Contraindicated in moderate-to-severe heart failure (NYHA III-IV).');
+  }
+  if (medClass === 'TNFi' && hasILD) {
+    warnings.push('Limited data in ILD. Rituximab or abatacept may be preferred.');
+  }
+  if (medClass === 'TNFi' && hasLymphoma) {
+    warnings.push('Avoid with lymphoproliferative history. Consider rituximab.');
+  }
+  if (medClass === 'JAKi' && ageOver50CV) {
+    warnings.push('FDA BOXED WARNING: Increased MACE, VTE, malignancy risk in patients ≥50 with CV risk factors (ORAL Surveillance).');
+  }
+  if (medClass === 'JAKi' && hasLymphoma) {
+    warnings.push('Avoid with lymphoproliferative history. Increased malignancy risk.');
+  }
+  if (['TNFi', 'IL-6i', 'JAKi', 'T-cell co-stimulation modulator', 'B-cell depleting'].includes(medClass) && hasHepB) {
+    warnings.push('Hep B+: Antiviral prophylaxis (entecavir/tenofovir) required before initiation.');
+  }
+  if (['TNFi', 'IL-6i', 'JAKi', 'T-cell co-stimulation modulator', 'B-cell depleting'].includes(medClass) && hasInfection) {
+    warnings.push('Prior serious infection: Careful risk-benefit assessment required.');
+  }
+
+  return warnings;
+}
+
 function RAMedications({ medications, answers, dispatch }) {
   const raMeds = MEDICATIONS.ra || [];
   const current = medications.current || [];
@@ -32,8 +70,9 @@ function RAMedications({ medications, answers, dispatch }) {
       <div className="grid grid-cols-2 gap-3">
         {raMeds.map((med) => {
           const selected = current.includes(med.id);
+          const warnings = getMedSafetyWarnings(med.id, med.class, answers);
           return (
-            <div key={med.id} className="border border-gray-200 rounded p-3">
+            <div key={med.id} className={`border rounded p-3 ${warnings.length > 0 ? 'border-amber-300 bg-amber-50' : 'border-gray-200'}`}>
               <button
                 type="button"
                 onClick={() => toggleMed(med.id)}
@@ -46,6 +85,16 @@ function RAMedications({ medications, answers, dispatch }) {
                 {med.name}
                 <span className="ml-2 text-xs opacity-70 font-normal">{med.class}</span>
               </button>
+              {warnings.length > 0 && (
+                <div className="mt-1 space-y-1">
+                  {warnings.map((w, i) => (
+                    <p key={i} className="text-xs text-amber-800 flex items-start gap-1">
+                      <span className="flex-shrink-0">⚠️</span>
+                      <span>{w}</span>
+                    </p>
+                  ))}
+                </div>
+              )}
               {selected && (
                 <input
                   type="text"

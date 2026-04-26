@@ -49,6 +49,81 @@ export const raRules = [
       },
     ],
   },
+  // On csDMARD with high DA + poor prognostic features — effectively failing
+  {
+    id: 'ra-on-csdmard-high-da-escalate',
+    condition: (state) => {
+      const da = getDiseaseActivity(state);
+      const onCsDMARD = state.answers['ra-dmard-history'] === 'on-csDMARD';
+      const poorPrognostic = state.answers['ra-functional-status'] === 'worsened' ||
+        state.answers['ra-new-joints'] === true ||
+        (state.answers['ra-flares-since-last'] != null && state.answers['ra-flares-since-last'] >= 2);
+      return da === 'High' && onCsDMARD && poorPrognostic;
+    },
+    recommendation:
+      'High disease activity despite csDMARD with poor prognostic features. Escalate to bDMARD or tsDMARD (conditionally recommended over triple therapy). Verify csDMARD dose is optimized (e.g., MTX 25 mg/week subcutaneous) before or concurrent with escalation.',
+    strength: 'conditional',
+    guideline: 'ACR_RA_2021',
+    rationale:
+      'ACR 2021 conditionally recommends adding/switching to bDMARD or tsDMARD for patients with inadequate response to csDMARD monotherapy. High disease activity with worsening function, new joint involvement, or frequent flares indicates inadequate response even if formally still "on" csDMARD.',
+    specialPopulations: [
+      {
+        condition: (s) => s.answers['ra-age-50-plus'] === true && s.answers['ra-cv-risk-factors'] === true,
+        note: 'FDA BOXED WARNING: Prefer bDMARD over JAKi — patient is ≥50 with CV risk factors (ORAL Surveillance).',
+      },
+      {
+        condition: (s) => s.answers['ra-hepatitis-b'] === true,
+        note: 'Hepatitis B positive: Antiviral prophylaxis required before biologic initiation.',
+      },
+      {
+        condition: (s) => {
+          const ea = s.answers['ra-extraarticular'];
+          return Array.isArray(ea) && ea.includes('ILD');
+        },
+        note: 'ILD present: Consider rituximab or abatacept. Avoid methotrexate if not already tolerated. Use caution with TNFi.',
+      },
+      {
+        condition: (s) => s.answers['ra-heart-failure'] === true,
+        note: 'Heart failure: Avoid TNF inhibitors. Consider non-TNF bDMARD or tsDMARD.',
+      },
+      {
+        condition: (s) => s.answers['ra-prior-serious-infection'] === true,
+        note: 'Prior serious infection: Shared decision-making required. Abatacept may have lower infection risk.',
+      },
+    ],
+  },
+  // On csDMARD with high DA but no poor prognostic features yet
+  {
+    id: 'ra-on-csdmard-high-da-optimize',
+    condition: (state) => {
+      const da = getDiseaseActivity(state);
+      const onCsDMARD = state.answers['ra-dmard-history'] === 'on-csDMARD';
+      const poorPrognostic = state.answers['ra-functional-status'] === 'worsened' ||
+        state.answers['ra-new-joints'] === true ||
+        (state.answers['ra-flares-since-last'] != null && state.answers['ra-flares-since-last'] >= 2);
+      return da === 'High' && onCsDMARD && !poorPrognostic;
+    },
+    recommendation:
+      'High disease activity on csDMARD. Optimize current csDMARD dose (e.g., MTX up to 25 mg/week, consider subcutaneous route). Reassess in 3 months. If not at target, escalate to bDMARD or tsDMARD.',
+    strength: 'conditional',
+    guideline: 'ACR_RA_2021',
+    rationale:
+      'Per treat-to-target strategy, treatment should be adapted if disease activity remains moderate-to-high. Dose optimization of csDMARD should be attempted before escalation, but persistent high disease activity at 3 months warrants biologic discussion.',
+  },
+  // On csDMARD with moderate DA
+  {
+    id: 'ra-on-csdmard-moderate-da',
+    condition: (state) => {
+      const da = getDiseaseActivity(state);
+      return da === 'Moderate' && state.answers['ra-dmard-history'] === 'on-csDMARD';
+    },
+    recommendation:
+      'Moderate disease activity on csDMARD. Optimize dose and reassess in 3 months. Target is remission or low disease activity.',
+    strength: 'conditional',
+    guideline: 'ACR_RA_2021',
+    rationale:
+      'Treat-to-target approach: therapy should be adapted if remission or low disease activity is not achieved within 3 months.',
+  },
   // csDMARD failure
   {
     id: 'ra-csdmard-fail-biologic',
@@ -161,6 +236,22 @@ export const raRules = [
     guideline: 'ACR_RA_2021',
     rationale:
       'ACR 2021 conditionally recommends bDMARDs over JAKi for patients ≥50 with CV risk factors based on ORAL Surveillance safety signals. FDA boxed warning applies to all JAK inhibitors (tofacitinib, baricitinib, upadacitinib).',
+  },
+  // ILD safety warning
+  {
+    id: 'ra-ild-mtx-caution',
+    condition: (state) => {
+      const ea = state.answers['ra-extraarticular'];
+      const hasILD = Array.isArray(ea) && ea.includes('ILD');
+      const onMTX = (state.medications?.current || []).includes('methotrexate');
+      return hasILD && onMTX;
+    },
+    recommendation:
+      'ILD present while on methotrexate: MTX is associated with pulmonary toxicity. Discuss with rheumatology whether to continue, reduce, or switch. Rituximab or abatacept may be preferred biologics in RA-ILD.',
+    strength: 'conditional',
+    guideline: 'ACR_RA_2021',
+    rationale:
+      'Methotrexate can cause or worsen interstitial lung disease. In patients with established RA-ILD, the risk-benefit should be carefully assessed. Rituximab and abatacept have better safety profiles in ILD.',
   },
   // TB screening at biologic decision point
   {

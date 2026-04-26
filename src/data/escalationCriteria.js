@@ -12,9 +12,34 @@ const raEscalation = [
     level: 'red',
     condition: (state) => {
       const ea = state.answers['ra-extraarticular'];
-      return Array.isArray(ea) && ea.length > 0;
+      const isNew = state.answers['ra-extraarticular-new'] !== false;
+      return Array.isArray(ea) && ea.length > 0 && isNew;
     },
     message: 'New extra-articular manifestation (ILD, vasculitis, scleritis). Immediate rheumatologist contact recommended.',
+    guideline: 'ACR_RA_2021',
+  },
+  {
+    id: 'ra-yellow-extraarticular-known',
+    level: 'yellow',
+    condition: (state) => {
+      const ea = state.answers['ra-extraarticular'];
+      return Array.isArray(ea) && ea.length > 0 && state.answers['ra-extraarticular-new'] === false;
+    },
+    message: 'Known extra-articular manifestations present. Continue monitoring. Ensure appropriate subspecialty follow-up.',
+    guideline: 'ACR_RA_2021',
+  },
+  {
+    id: 'ra-red-high-da-on-csdmard',
+    level: 'red',
+    condition: (state) => {
+      const da = state.scores?.cdai?.category || state.scores?.das28esr?.category || state.scores?.das28crp?.category;
+      const onCsDMARD = state.answers['ra-dmard-history'] === 'on-csDMARD';
+      const poorPrognostic = state.answers['ra-functional-status'] === 'worsened' ||
+        state.answers['ra-new-joints'] === true ||
+        (state.answers['ra-flares-since-last'] != null && state.answers['ra-flares-since-last'] >= 2);
+      return da === 'High' && onCsDMARD && poorPrognostic;
+    },
+    message: 'High disease activity on csDMARD with poor prognostic features (worsened function, new joints, or frequent flares). Escalation to biologic therapy recommended per ACR 2021. Schedule urgent rheumatology follow-up.',
     guideline: 'ACR_RA_2021',
   },
   {
@@ -28,6 +53,20 @@ const raEscalation = [
     guideline: 'ACR_RA_2021',
   },
   // YELLOW FLAGS
+  {
+    id: 'ra-yellow-high-da-on-csdmard',
+    level: 'yellow',
+    condition: (state) => {
+      const da = state.scores?.cdai?.category || state.scores?.das28esr?.category || state.scores?.das28crp?.category;
+      const onCsDMARD = state.answers['ra-dmard-history'] === 'on-csDMARD';
+      const poorPrognostic = state.answers['ra-functional-status'] === 'worsened' ||
+        state.answers['ra-new-joints'] === true ||
+        (state.answers['ra-flares-since-last'] != null && state.answers['ra-flares-since-last'] >= 2);
+      return da === 'High' && onCsDMARD && !poorPrognostic;
+    },
+    message: 'High disease activity on csDMARD. Consider treatment escalation discussion. Reassess in 3 months per treat-to-target strategy.',
+    guideline: 'ACR_RA_2021',
+  },
   {
     id: 'ra-yellow-moderate-on-treatment',
     level: 'yellow',

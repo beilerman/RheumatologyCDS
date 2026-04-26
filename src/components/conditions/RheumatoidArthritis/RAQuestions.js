@@ -90,6 +90,14 @@ export const RA_QUESTION_GROUPS = [
         tooltip: 'RED FLAG: Any new extra-articular manifestation warrants urgent rheumatologist contact. ILD, vasculitis, and scleritis may require immediate escalation.',
       },
       {
+        id: 'ra-extraarticular-new',
+        label: 'Are these extra-articular findings NEW since last visit?',
+        type: 'toggle',
+        showWhen: (answers) =>
+          Array.isArray(answers['ra-extraarticular']) && answers['ra-extraarticular'].length > 0,
+        tooltip: 'New findings trigger immediate escalation. Known/stable findings require ongoing monitoring but not urgent action.',
+      },
+      {
         id: 'ra-fatigue',
         label: 'Fatigue (0–10)',
         type: 'slider',
@@ -100,6 +108,38 @@ export const RA_QUESTION_GROUPS = [
         id: 'ra-exercise',
         label: 'Patient engaged in regular exercise?',
         type: 'toggle',
+      },
+    ],
+  },
+  {
+    id: 'ra-labs',
+    title: 'Laboratory Values',
+    section: 'symptoms',
+    questions: [
+      {
+        id: 'ra-crp',
+        label: 'CRP (mg/L)',
+        type: 'numeric',
+        min: 0,
+        max: 300,
+        step: 0.1,
+        tooltip: 'C-reactive protein. Required for DAS28-CRP calculation. Normal is typically <3 mg/L.',
+      },
+      {
+        id: 'ra-esr',
+        label: 'ESR (mm/hr)',
+        type: 'numeric',
+        min: 0,
+        max: 150,
+        tooltip: 'Erythrocyte sedimentation rate. Required for DAS28-ESR calculation.',
+      },
+      {
+        id: 'ra-patient-global-mm',
+        label: 'Patient global assessment for DAS28 (0–100 mm VAS)',
+        type: 'numeric',
+        min: 0,
+        max: 100,
+        tooltip: 'DAS28 uses the 0-100mm VAS scale, not the 0-10 scale. If only 0-10 is available, multiply by 10.',
       },
     ],
   },
@@ -147,6 +187,17 @@ export const RA_QUESTION_GROUPS = [
           { value: '>3 months', label: 'More than 3 months' },
         ],
         tooltip: 'Long-term glucocorticoid use (>3 months) is a yellow flag. Guidelines recommend bridging only, with structured taper plan.',
+      },
+      {
+        id: 'ra-prednisone-dose',
+        label: 'Current prednisone dose (mg/day)',
+        type: 'numeric',
+        min: 0,
+        max: 60,
+        step: 0.5,
+        showWhen: (answers) =>
+          answers['ra-prednisone-duration'] && answers['ra-prednisone-duration'] !== 'not on prednisone',
+        tooltip: 'Dose is important for taper planning and side effect risk assessment. Doses >7.5 mg/day carry higher risk.',
       },
       {
         id: 'ra-heart-failure',

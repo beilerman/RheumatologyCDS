@@ -139,6 +139,49 @@ function suggestFollowUp(state) {
   return '3-6 months';
 }
 
+function suggestLabs(state) {
+  const labs = [];
+  const monitoringDue = (state.monitoringStatus || [])
+    .filter((m) => m.status === 'Due' || m.status === 'Overdue')
+    .map((m) => m.item);
+  labs.push(...monitoringDue);
+
+  if (state.condition === 'ra') {
+    const meds = state.medications?.current || [];
+    const answers = state.answers || {};
+
+    // MTX labs
+    if (meds.includes('methotrexate') && !labs.some((l) => l.includes('CBC'))) {
+      labs.push('CBC with differential');
+    }
+    if (meds.includes('methotrexate') && !labs.some((l) => l.includes('CMP'))) {
+      labs.push('CMP (LFTs, renal function)');
+    }
+    // Hep B monitoring
+    if (answers['ra-hepatitis-b'] === true) {
+      labs.push('Hepatitis B DNA/viral load');
+    }
+    // Inflammatory markers if not recently checked
+    if (answers['ra-crp'] == null && answers['ra-esr'] == null) {
+      labs.push('CRP and/or ESR (inflammatory markers)');
+    }
+    // Biologic pre-screening
+    const dmardHistory = answers['ra-dmard-history'];
+    if (['failed-csDMARD', 'on-csDMARD'].includes(dmardHistory)) {
+      const da = state.scores?.cdai?.category;
+      if (['Moderate', 'High'].includes(da)) {
+        if (answers['ra-tb-screening-done'] !== true) {
+          labs.push('TB screening (PPD or IGRA) — required before biologic initiation');
+        }
+      }
+    }
+  }
+
+  // Deduplicate
+  const unique = [...new Set(labs)];
+  return unique.length > 0 ? unique.join(', ') : 'None at this time';
+}
+
 export function formatVisitSummary(state) {
   return `RHEUMATOLOGY FOLLOW-UP VISIT SUMMARY
 =====================================
@@ -166,5 +209,5 @@ ${formatRecommendations(state)}
 
 FOLLOW-UP:
 - Next video visit: ${suggestFollowUp(state)}
-- Labs to order: ${(state.monitoringStatus || []).filter((m) => m.status === 'Due' || m.status === 'Overdue').map((m) => m.item).join(', ') || 'None at this time'}`;
+- Labs to order: ${suggestLabs(state)}`;
 }
